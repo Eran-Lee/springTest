@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SchedularTest {
-	@Scheduled(cron="0/5 * * * * ?")
+	@Scheduled(cron="1 * * * * ?")
 	public void testScedular() {
 		System.out.println("我就是spring的定时任务");
 	}
