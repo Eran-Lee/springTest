@@ -1,12 +1,14 @@
-package com.fengyu.test;
+package com.eran.test;
 
 import java.io.IOException;
+import java.util.Date;
 
+import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.QueueConnection;
 import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueReceiver;
+import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -17,10 +19,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Receive{
+public class Sender{
 
-	@Scheduled(cron="0/10 * * * * ?")
-	public void receive() throws IOException {
+	@Scheduled(cron="0/5 * * * * ?")
+	public void sender() throws IOException {
 		
 		try {
 			InitialContext context = new InitialContext();
@@ -31,15 +33,17 @@ public class Receive{
 		
 			QueueConnection connection = (QueueConnection)conFactory.createConnection();
 			
-			QueueSession queueSession = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+			QueueSession queueSession = connection.createQueueSession(false, Session.DUPS_OK_ACKNOWLEDGE);
 			
-			QueueReceiver receiver = queueSession.createReceiver(queue);
+			QueueSender sender = queueSession.createSender(queue);
 			
-			connection.start();
+			sender.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 			
-			TextMessage message = (TextMessage)receiver.receive();
+			TextMessage message = queueSession.createTextMessage("Hello World" + new Date().getTime());
 			
-			System.out.println("接受消息：" + message);
+			sender.send(message);
+			
+			System.out.println("我在发送");
 			
 			connection.close();
 			
@@ -51,6 +55,5 @@ public class Receive{
 			e.printStackTrace();
 		}
 	}
-
 
 }
