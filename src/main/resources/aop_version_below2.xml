@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
+        
+        <bean id="helloWorldImplA" class="com.eran.aop_version_below2.HelloWorldImplA" />
+        <bean id="afterLogAdvice" class="com.eran.aop_version_below2.AfterLogAdvice" />
+        <bean id="beforeLogAdvice" class="com.eran.aop_version_below2.BeforeLogAdvice" />
+        
+        <!-- <aop:config>
+            <aop:aspect id="time" ref="timeHandler">
+                <aop:pointcut id="addAllMethod" expression="execution(* com.eran.aop.HelloWorld.*(..))" />
+                <aop:before method="printTime" pointcut-ref="addAllMethod" />
+                <aop:after method="printTime" pointcut-ref="addAllMethod" />
+            </aop:aspect>
+        </aop:config> -->
+        <!-- 以上是aop2.0以下的aop实现方式 -->
+        
+         <!--  <bean id="userServProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+			   <property name="interfaces">
+			   可以添加多个接口
+			    <list>
+			     <value>com.eran.aop_version_below2.HelloWorld</value>
+			    </list>
+			   </property>
+			   引入通知
+			   <property name="interceptorNames">
+			    <list>
+			     <value>afterLogAdvice</value>
+			     <value>beforeLogAdvice</value>
+			    </list>
+			   </property>
+			   目标对象
+			   <property name="target" ref="helloWorldImplA"/>
+  			</bean> -->
+         <!-- 通过以上配置，无法成功，先放一下 -->
+        <aop:config>
+            <aop:aspect id="beforeLogAdvice" ref="beforeLogAdvice">
+                <aop:pointcut id="addAllMethod" expression="execution(* com.eran.aop_version_below2.HelloWorld.*(..))" />
+                <aop:before method="before" pointcut-ref="addAllMethod" />
+            </aop:aspect>
+            
+            <aop:aspect id="afterLogAdvice" ref="afterLogAdvice">
+                <aop:pointcut id="addAllMethod" expression="execution(* com.eran.aop_version_below2.HelloWorld.*(..))" />
+                <aop:after method="afterReturning" pointcut-ref="addAllMethod" />
+            </aop:aspect>
+        </aop:config>
+</beans>
